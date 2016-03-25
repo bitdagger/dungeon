@@ -28,6 +28,9 @@ public final class Client extends Dungeon implements EventHandler
 	 * Instanciate the display and event managers and set operating defaults.
 	 */
 	public Client() {
+		super();
+		
+		Logger.instance().debug("Launching Client...");
 		this.em = EventManager.instance();
 		this.display = Display.instance();
 		if (this.display == null) {
