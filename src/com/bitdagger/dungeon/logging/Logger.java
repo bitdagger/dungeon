@@ -1,6 +1,8 @@
 package com.bitdagger.dungeon.logging;
 
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class Logger
 {
@@ -25,6 +27,11 @@ public final class Logger
 	private boolean debugging;
 	
 	/**
+	 * Date formatter
+	 */
+	private SimpleDateFormat sdf;
+	
+	/**
 	 * Construct a new Logger object
 	 */
 	private Logger()
@@ -33,6 +40,7 @@ public final class Logger
 		this.out = System.out;
 		this.err = System.err;
 		this.debugging = false;
+		this.sdf = new SimpleDateFormat("HH:mm:ss");
 	}
 	
 	/**
@@ -168,7 +176,7 @@ public final class Logger
 				log = this.out;
 		}
 		
-		log.println(String.format("[%s] %s", lvl.getValue(), msg));
+		log.println(String.format("[%s %s] %s", this.sdf.format(new Date()), lvl.getValue(), msg));
 	}
 	
 	/**
