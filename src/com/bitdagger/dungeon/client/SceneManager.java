@@ -117,4 +117,14 @@ public final class SceneManager
 	{
 		return this.activeScene;
 	}
+	
+	/**
+	 * Pop all scenes and cleanup
+	 */
+	public void destroy()
+	{
+		while(!this.scenes.isEmpty()) {
+			this.scenes.pop().cleanup();
+		}
+	}
 }

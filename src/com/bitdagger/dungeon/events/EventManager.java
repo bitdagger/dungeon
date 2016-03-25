@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+import com.bitdagger.dungeon.client.Scene;
+
 /**
  * Event manager
  *
@@ -199,6 +201,13 @@ public final class EventManager
 				continue;
 			}
 			for (EventHandler handler : registry.get(type)) {
+				// Skip paused scenes
+				if (handler instanceof Scene) {
+					Scene scene = (Scene) handler;
+					if (!scene.getState().equals(Scene.State.RUNNING)) {
+						continue;
+					}
+				}
 				try {
 					Method handleMethod = handler.getClass().getMethod("handleEvent", type);
 					handleMethod.invoke(handler, event);

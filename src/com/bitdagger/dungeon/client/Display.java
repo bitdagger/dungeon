@@ -150,11 +150,16 @@ public final class Display
     
     /**
      * Render the frame
+     * 
+     * @param activescene The active scene we should render
      */
-    public void render()
+    public void render(Scene activescene)
     {
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	    glfwSwapBuffers(this.windowHandle);
+	    if (activescene != null) {	    	
+	    	activescene.draw();
+	    }
 	    glfwPollEvents();
     }
     
