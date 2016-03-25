@@ -7,6 +7,7 @@ import com.bitdagger.dungeon.client.events.KeyPressEvent;
 import com.bitdagger.dungeon.client.events.KeyReleaseEvent;
 import com.bitdagger.dungeon.client.events.KeyRepeatEvent;
 import com.bitdagger.dungeon.events.EventManager;
+import com.bitdagger.dungeon.logging.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -30,6 +31,11 @@ public final class Display
     private long windowHandle;
     
     /**
+     * Debugging output for key events
+     */
+    private final boolean keydebug = false;
+    
+    /**
      * Singleton accessor
      * 
      * @return Singleton instance
@@ -38,7 +44,12 @@ public final class Display
     {
     	if (Display.instance == null) {
     		Display.instance = new Display();
-    		Display.instance.init();
+    		try {
+    			Display.instance.init();
+    		} catch (Exception e) {
+    			Logger.instance().fatal(e.getMessage());
+    			Display.instance = null;
+    		}
     	}
     	
     	return Display.instance;
@@ -50,7 +61,7 @@ public final class Display
     private void init()
     {
     	// Set up the error callback to print to System.err
-        glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+        glfwSetErrorCallback(GLFWErrorCallback.createPrint(Logger.instance().getErrorStream()));
  
         // Initialize GLFW. Most GLFW functions will not work before doing this
         if (glfwInit() != GLFW_TRUE) {
@@ -85,12 +96,11 @@ public final class Display
     	);
         
         // Set up a key callback (pressed, repeat, released)
+        final Display self = this;
         glfwSetKeyCallback(this.windowHandle, new GLFWKeyCallback()
         {
             @Override
-            public void invoke(long window, int key, int scancode, 
-            				   int action, int mods) {
-            	
+            public void invoke(long window, int key, int scancode, int action, int mods) {
             	// DEBUG - Temporary kill-switch on ESC
             	// Allows us to quit the application quickly
             	if (key == GLFW_KEY_ESCAPE) {
@@ -106,13 +116,19 @@ public final class Display
             	// Send the key event to the event manager for handling
             	EventManager em = EventManager.instance();
             	if (action == GLFW_PRESS) {
+            		if (self.keydebug)
+            			Logger.instance().debug("Key pressed [" + key + ", " + scancode + ", " + mods + "]");
             		em.raise(new KeyPressEvent(key, scancode, mods));
             	} else if (action == GLFW_RELEASE) {
+            		if (self.keydebug)
+            			Logger.instance().debug("Key released [" + key + ", " + scancode + ", " + mods + "]");
             		em.raise(new KeyReleaseEvent(key, scancode, mods));
             	} else if (action == GLFW_REPEAT) {
+            		if (self.keydebug)
+            			Logger.instance().debug("Key repeated [" + key + ", " + scancode + ", " + mods + "]");
             		em.raise(new KeyRepeatEvent(key, scancode, mods));
             	} else {
-            		// Unknown action, ignore for now
+            		Logger.instance().notice("Unknown key action: " + action);
             	}
             }
         });
@@ -147,6 +163,7 @@ public final class Display
      */
     public void destroy()
     {
+    	Logger.instance().debug("Tearing down display...");
     	glfwDestroyWindow(this.windowHandle);
     	glfwTerminate();
     	

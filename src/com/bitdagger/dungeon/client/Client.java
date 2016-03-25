@@ -3,6 +3,7 @@ package com.bitdagger.dungeon.client;
 import com.bitdagger.dungeon.Dungeon;
 import com.bitdagger.dungeon.events.EventHandler;
 import com.bitdagger.dungeon.events.EventManager;
+import com.bitdagger.dungeon.logging.Logger;
 
 /**
  * Main client class
@@ -29,6 +30,9 @@ public final class Client extends Dungeon implements EventHandler
 	public Client() {
 		this.em = EventManager.instance();
 		this.display = Display.instance();
+		if (this.display == null) {
+			System.exit(1);
+		}
 	}
 
 	/**
@@ -38,6 +42,7 @@ public final class Client extends Dungeon implements EventHandler
 	 * split into other areas such as the event manager and display manager.
 	 */
 	public void run() {
+		Logger.instance().debug("Starting client loop...");
 		while (!this.display.shouldClose()) {
 			this.em.process();
 
@@ -45,5 +50,6 @@ public final class Client extends Dungeon implements EventHandler
 		}
 
 		this.display.destroy();
+		Logger.instance().debug("Completing client loop...");
 	}
 }
