@@ -1,73 +1,94 @@
 package com.bitdagger.dungeon.client;
 
-import java.util.ArrayList;
-
 import com.bitdagger.dungeon.events.EventHandler;
 import com.bitdagger.dungeon.events.EventManager;
 
+/**
+ * Scene
+ */
 public abstract class Scene implements EventHandler
 {
-	protected ArrayList<Class<?>> eventhandles;
-	protected EventManager em;
+	/**
+	 * Current state of the scene
+	 */
+	protected State state;
 	
+	/**
+	 * Construct a new Scene object
+	 */
 	public Scene()
 	{
-		this.eventhandles = new ArrayList<Class<?>>();
-		this.em = EventManager.instance();
+		this.state = State.NEW;
 	}
 	
-	protected void registerEvent(Class<?> handle)
+	/**
+	 * Get the current state of the scene
+	 * 
+	 * @return Current state
+	 */
+	public State getState()
 	{
-		this.em.register(this, handle);
-		this.eventhandles.add(handle);
+		return this.state;
 	}
 	
-	protected void unregisterEvent(Class<?> handle)
-	{
-		this.em.unregister(this, handle);
-		this.eventhandles.remove(handle);
-	}
-	
-	protected void unregisterAllEvents()
-	{
-		for (Class<?> handle : this.eventhandles) {
-			this.em.unregister(this, handle);
-		}
-		
-		this.eventhandles.clear();
-	}
-	
+	/**
+	 * Initialize the scene
+	 */
 	public void init()
 	{
-		
+		this.state = State.RUNNING;
 	}
 	
+	/**
+	 * Prepare to be deleted
+	 */
 	public void cleanup()
 	{
-		this.unregisterAllEvents();
+		EventManager.instance().unregister(this);
+		this.state = State.DEAD;
 	}
 	
+	/**
+	 * Do things
+	 */
 	public void update()
 	{
-		
+		if (!this.state.equals(State.RUNNING)) {
+			throw new RuntimeException(
+				"Tried to update a scene that was not running!"
+			);
+		}
 	}
 	
+	/**
+	 * Pause the scene
+	 */
 	public void pause()
 	{
-		for (Class<?> handle : this.eventhandles) {
-			this.em.unregister(this, handle);
-		}
+		this.state = State.PAUSED;
 	}
 	
+	/**
+	 * Resume the scene
+	 */
 	public void resume()
 	{
-		for (Class<?> handle : this.eventhandles) {
-			this.em.register(this, handle);
-		}
+		this.state = State.RUNNING;
 	}
 	
+	/**
+	 * Render the scene
+	 */
 	public void draw()
 	{
-		
+		// Default implementation is to do nothing
+	}
+	
+	/**
+	 * State enumeration
+	 */
+	public enum State
+	{
+		NEW, RUNNING, PAUSED, DEAD
 	}
 }

@@ -1,44 +1,49 @@
 package com.bitdagger.dungeon.client;
 
 import com.bitdagger.dungeon.Dungeon;
-import com.bitdagger.dungeon.client.events.KeyPressEvent;
-import com.bitdagger.dungeon.events.Event;
 import com.bitdagger.dungeon.events.EventHandler;
 import com.bitdagger.dungeon.events.EventManager;
-import com.bitdagger.dungeon.events.TestEvent;
 
-import static org.lwjgl.glfw.GLFW.*;
-
+/**
+ * Main client class
+ * 
+ * Encompasses everything the client needs to run successfully.
+ */
 public final class Client extends Dungeon implements EventHandler
 {
+	/**
+	 * Reference to the display manager
+	 */
 	private Display display;
+
+	/**
+	 * Reference to the event manager
+	 */
 	private EventManager em;
-	
-	public Client()
-	{
-		this.em = EventManager.instance(); 
-		this.em.register(this,TestEvent.class);
+
+	/**
+	 * Construct a new Client object
+	 * 
+	 * Instanciate the display and event managers and set operating defaults.
+	 */
+	public Client() {
+		this.em = EventManager.instance();
 		this.display = Display.instance();
-		
-		this.em.raise(new TestEvent(1));
 	}
-	
-	public void handleEvent(TestEvent event)
-	{
-		System.out.println(event.getData());
-		this.em.raise(new TestEvent(event.getData() + 1));
-	}
-	
-	public void run()
-	{
-		this.display.init();
-		
-		while (glfwWindowShouldClose(this.display.getWindowHandle()) == GLFW_FALSE) {
-			this.em.handle();
-			
+
+	/**
+	 * Run the game
+	 * 
+	 * This acts as our main game loop, though the actual logic ends up being
+	 * split into other areas such as the event manager and display manager.
+	 */
+	public void run() {
+		while (!this.display.shouldClose()) {
+			this.em.process();
+
 			this.display.render();
 		}
-		
+
 		this.display.destroy();
 	}
 }
