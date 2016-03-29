@@ -27,6 +27,21 @@ public final class Client extends Dungeon implements EventHandler
 	 * Reference to the scene manager
 	 */
 	private SceneManager sm;
+	
+	/**
+	 * Target frames per second
+	 */
+	private static final int TARGET_FPS = 60;
+	
+	/**
+	 * Target updates per second
+	 */
+	private static final int TARGET_UPS = 5;
+	
+	/**
+	 * Timer
+	 */
+	private Timer timer;
 
 	/**
 	 * Construct a new Client object
@@ -39,6 +54,7 @@ public final class Client extends Dungeon implements EventHandler
 		Logger.instance().debug("Launching Client...");
 		this.em = EventManager.instance();
 		this.sm = SceneManager.instance();
+		this.timer = Timer.instance();
 		this.display = Display.instance();
 		if (this.display == null) {
 			System.exit(1);
@@ -53,16 +69,42 @@ public final class Client extends Dungeon implements EventHandler
 	 */
 	public void run() {
 		this.sm.pushScene(new TitleMenuScene());
+		this.display.showWindow();
+		
+		float delta;
+		float alpha;
+		float accumulator = 0f;
+		float interval = 1f / TARGET_UPS;
 		
 		Logger.instance().debug("Starting client loop...");
 		while (!this.display.shouldClose()) {
-			this.em.process();
-
-			this.display.render(this.sm.getActiveScene());
+			delta = timer.getDelta();
+			accumulator += delta;
+			
+			while(accumulator >= interval) {
+				this.update(interval);
+				this.timer.updateUPS();
+				accumulator -= interval;
+			}
+			
+			alpha = accumulator / interval;
+			this.display.render(this.sm.getActiveScene(), alpha);
+			this.timer.updateFPS();
 		}
 
 		this.sm.destroy();
 		this.display.destroy();
 		Logger.instance().debug("Completing client loop...");
+	}
+	
+	/**
+	 * Update the game state
+	 * 
+	 * @param delta Delta value
+	 */
+	private void update(float delta)
+	{
+		this.em.process();
+		this.sm.getActiveScene().update(delta);
 	}
 }

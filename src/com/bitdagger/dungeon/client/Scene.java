@@ -53,8 +53,10 @@ public abstract class Scene implements EventHandler
 	
 	/**
 	 * Do things
+	 * 
+	 * @param delta Delta value
 	 */
-	public void update()
+	public void update(float delta)
 	{
 		if (!this.state.equals(State.RUNNING)) {
 			throw new RuntimeException(
@@ -83,8 +85,10 @@ public abstract class Scene implements EventHandler
 	
 	/**
 	 * Render the scene
+	 * 
+	 * @param alpha Alpha value
 	 */
-	public void draw()
+	public void draw(float alpha)
 	{
 		// Default implementation is to do nothing
 	}

@@ -100,11 +100,13 @@ public final class SceneManager
 	
 	/**
 	 * Update the active scene
+	 * 
+	 * @param delta Delta value
 	 */
-	public void update()
+	public void update(float delta)
 	{
 		if (this.activeScene != null) {
-			this.activeScene.update();
+			this.activeScene.update(delta);
 		}
 	}
 	
