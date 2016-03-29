@@ -1,30 +1,20 @@
 package com.bitdagger.dungeon.client;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
 import com.bitdagger.dungeon.client.events.KeyPressEvent;
 import com.bitdagger.dungeon.client.events.KeyReleaseEvent;
 import com.bitdagger.dungeon.client.events.KeyRepeatEvent;
-import com.bitdagger.dungeon.client.math.Matrix4f;
 import com.bitdagger.dungeon.events.EventManager;
 import com.bitdagger.dungeon.logging.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

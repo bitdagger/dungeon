@@ -36,7 +36,7 @@ public final class Client extends Dungeon implements EventHandler
 	/**
 	 * Target updates per second
 	 */
-	private static final int TARGET_UPS = 5;
+	private static final int TARGET_UPS = 30;
 	
 	/**
 	 * Timer
@@ -90,6 +90,8 @@ public final class Client extends Dungeon implements EventHandler
 			alpha = accumulator / interval;
 			this.display.render(this.sm.getActiveScene(), alpha);
 			this.timer.updateFPS();
+			
+			this.timer.update();
 		}
 
 		this.sm.destroy();
